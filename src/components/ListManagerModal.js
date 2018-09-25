@@ -1,22 +1,15 @@
 import React from 'react';
 import Modal from "react-native-modal";
 import { StyleSheet, Text, View, Alert, ScrollView, TouchableOpacity, FlatList } from 'react-native';
-import { Button, FormInput, Card, ListItem } from 'react-native-elements'
-import { AsyncStorage } from "react-native"
+import { Button, FormInput, Card, ListItem } from 'react-native-elements';
+import { saveData, getData } from '../api/listManager'
+
 
 export default class ListManagerModal extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = { myKey: '', store: '@RandomeChooser:', listsNames: ['list 1', 'list 2', 'list 3', 'list 4'], currentListName: '' }
-  }
-
-  async saveData(key, value) {
-    try {
-      await AsyncStorage.setItem(this.state.store + key, value);
-    } catch (error) {
-      console.log("Error saving data" + error);
-    }
+    this.state = { myKey: '', listsNames: ['list 1', 'list 2', 'list 3', 'list 4'], currentListName: '' }
   }
 
   componentDidMount() {
@@ -28,28 +21,23 @@ export default class ListManagerModal extends React.Component {
     // }
   }
 
-  async getData(key) {
-    try {
-      const value = await AsyncStorage.getItem(this.state.store + key);
-      this.setState({ myKey: value });
-    } catch (error) {
-      console.log("Error retrieving data" + error);
-    }
-  }
+  
   
   handleTextChange = (name) => {
     this.setState({ currentListName: name });
   }
 
   saveList = () => {
+    debugger
     this.setState({ listsNames: [...this.state.listsNames, this.state.currentListName] }, () => {
-      this.setState({listsNames: [...this.listsNames, this.state.currentListName]})
+      saveData('TEST_KEY', JSON.stringify(this.state.listsNames))
+      //this.saveData(this.state.currentListName, JSON.stringify(this.props.listsNames))
     });
-    this.saveData(this.state.currentListName, JSON.stringify(this.props.listItems))
+    
   }
 
   loadList = () => {
-    this.getData('TEST_KEY')
+    getData('TEST_KEY')
   }
 
   render() {
