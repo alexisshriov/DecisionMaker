@@ -11,13 +11,15 @@ export async function saveData (key, value) {
     }
   };
 
-
 export async function getData (key) {
-    try {
-        const value = await AsyncStorage.getItem(store + key);
-        //let test = value
+    console.log('inside api')
 
-        return value
+    try {
+        debugger
+        const value = await AsyncStorage.getItem(store + key);
+        let test = value
+        console.log('inside api', value)
+
     } catch (error) {
         console.log("Error retrieving data" + error);
     }

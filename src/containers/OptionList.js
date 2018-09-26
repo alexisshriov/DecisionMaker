@@ -71,9 +71,7 @@ export class OptionList extends React.Component {
   }
 
   deleteItem = (index) => {
-    const options = this.state.options;
-    let newOptions = this.state.options.filter(option => options.indexOf(option) != index)
-    this.setState({ options: newOptions })
+    this.props.actions.deleteOption(index)
   }
 
   _toggleModal = () =>
