@@ -55,20 +55,20 @@ export function loadList() {
   // debugger
   ///Alert.alert(list)
   
-   const store = '@RandomeChooser:';
-   let temp;
+  //  const store = '@RandomeChooser:';
+  //  let temp;
 
      return async (dispatch, getState) => {
         try {
           debugger
           const lists = await AsyncStorage.getItem(store + 'TEST_KEY');
           dispatch(loadListSuccess(json))
-        } catch (err) {
+        } catch (error) {
           debugger
           console.log('an error has occured')
          // dispatch({ type: 'error', name: 'error', value: e.message })
         }
-      }
+     }
 
   // debugger
 
@@ -81,5 +81,5 @@ export function loadList() {
   //   console.log("Error retrieving data" + error);
   // }
 
-  // debugger
+  debugger
 }
