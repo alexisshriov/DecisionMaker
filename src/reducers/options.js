@@ -1,15 +1,15 @@
-import { ADD_OPTION_SUCCESS, LOAD_LIST_SUCCESS, DELETE_OPTION_SUCCESS } from '../constants/actionTypes'
+import { ADD_OPTION, LOAD_OPTIONS_SUCCESS, DELETE_OPTION } from '../constants/actionTypes'
 
 const optionsReducer = (state = [], action) => {
-    debugger
+
     switch (action.type) {
-        case ADD_OPTION_SUCCESS:
+        case ADD_OPTION:
             return [...state, action.optionDesc]
-        case DELETE_OPTION_SUCCESS:
+        case DELETE_OPTION:
             let newState = [...state]
             newState.splice(action.index, 1);
             return newState
-        case LOAD_LIST_SUCCESS:
+        case LOAD_OPTIONS_SUCCESS:
             return action.list
         default:
             return state;

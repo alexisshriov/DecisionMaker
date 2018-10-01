@@ -12,7 +12,6 @@ export async function saveData (key, value) {
   };
 
 export async function getData (key) {
-    console.log('inside api')
 
     try {
         debugger

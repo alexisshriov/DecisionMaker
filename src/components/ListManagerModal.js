@@ -1,8 +1,8 @@
 import React from 'react';
+import { Alert, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, Card, FormInput } from 'react-native-elements';
 import Modal from "react-native-modal";
-import { StyleSheet, Text, View, Alert, ScrollView, TouchableOpacity, FlatList } from 'react-native';
-import { Button, FormInput, Card, ListItem } from 'react-native-elements';
-import { saveData, getData } from '../api/listManager'
+import { getData, saveData } from '../api/listManager';
 
 
 export default class ListManagerModal extends React.Component {
@@ -13,6 +13,7 @@ export default class ListManagerModal extends React.Component {
   }
 
   componentDidMount() {
+    // getData('LISTS')
     // try {
     //   const value = await AsyncStorage.getItem(this.state.store + 'listsNames');
     //   this.setState({ listsNames: value });
@@ -22,25 +23,43 @@ export default class ListManagerModal extends React.Component {
   }
 
   
-  
   handleTextChange = (name) => {
     this.setState({ currentListName: name });
   }
 
   saveList = () => {
-    debugger
+    // saving the list name in the the list array
     this.setState({ listsNames: [...this.state.listsNames, this.state.currentListName] }, () => {
-      saveData('TEST_KEY', JSON.stringify(this.state.listsNames))
-      //this.saveData(this.state.currentListName, JSON.stringify(this.props.listsNames))
+      saveData('LISTS', JSON.stringify(this.state.listsNames))
+      // this.saveData(this.state.currentListName, JSON.stringify(this.props.listsNames))
     });
+
+    this.props.saveList(this.state.currentListName)
+    this.props.toggleModal('')
+    
+
+    // Saving the list contents
     
   }
 
   loadList = () => {
-    getData('TEST_KEY')
+    // console.log('inside load list')
+    // debugger
+    debugger
+    this.props.toggleModal('')
+    this.props.loadList(this.state.currentListName)
+    // debugger
+
+  }
+
+  handlePress(listName) {
+    debugger
+    this.setState({currentListName: listName})
   }
 
   render() {
+    const buttonTitle = `${this.props.mode} List`;
+    const buttonAction = this.props.mode == 'save'?this.saveList:this.loadList;
 
     return (
       <View>
@@ -49,23 +68,22 @@ export default class ListManagerModal extends React.Component {
             <View style={styles.container}>
               <Modal isVisible={this.props.isVisible} onRequestClose={() => { }}>
                 <View style={styles.modalContent}>
-                  <Text>Hello!</Text>
+                  <Text>{this.props.mode} list</Text>
                   <FormInput onChangeText={this.handleTextChange} value={this.state.currentListName} />
                   <FlatList style={styles.list}
                     data={this.state.listsNames}
                     renderItem={({ item }) => (
-                      <TouchableOpacity>
+                      <TouchableOpacity onPress={() => this.handlePress(item)}>
                         <View>
                           <Text>{item}</Text>
                         </View>
                       </TouchableOpacity>
                     )}
-                  />
+                  />                 
+                  <Button title = {buttonTitle} onPress={buttonAction} />
 
-                  <Button title='save keys' onPress={this.saveList} />
-                  <Button title='get key' onPress={this.loadList} />
                   
-                  <TouchableOpacity onPress={this.props.toggleModal}>
+                  <TouchableOpacity onPress={() => this.props.toggleModal('')}>
                     <View style={styles.button}>
                       <Text>{this.state.myKey}</Text>
                     </View>

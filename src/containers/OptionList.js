@@ -16,7 +16,7 @@ export class OptionList extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = { newOption: '', selectedItemIndex: -1, isModalVisible: false }
+    this.state = { newOption: '', selectedItemIndex: -1, isModalVisible: false, managerMode: '' }
     //this.state = { newOption: '345', options: ["option 1", "option 2", "option 3", "option 4", "option 5", "option 6", "option 7", "option 8", "option 9", "option 10", "option 11", "option 12", "option 13", "option 14", "option 15"] }
   }
   // async componentWillMount(){
@@ -40,9 +40,8 @@ export class OptionList extends React.Component {
     // saveData('TEST_KEY', JSON.stringify(options))
     //loadList()
     //this.props.actions.loadList('testListName')
-
-
   }
+
 
   handleTextChange = (text) => {
     this.setState({ newOption: text });
@@ -57,6 +56,11 @@ export class OptionList extends React.Component {
     //  this.setState({options: updatedOptions});
     //  this.setState({newOption: ''});
 
+  }
+
+  saveList = (listName) => {
+    debugger
+    this.props.actions.saveList(listName, this.props.options)
   }
 
   getRandomInt = (min, max) => {
@@ -74,30 +78,42 @@ export class OptionList extends React.Component {
     this.props.actions.deleteOption(index)
   }
 
-  _toggleModal = () =>
-    this.setState({ isModalVisible: !this.state.isModalVisible });
-
-  test  = () => {
-    this.props.actions.loadList()
+  _toggleModal = (managerMode) => {
+    debugger
+    this.setState({managerMode: managerMode, isModalVisible: !this.state.isModalVisible });
   }
+
+  loadList = (listName) => {
+    this.props.actions.loadList(listName)
+  }
+
+
+
 
   render() {
     return (
       <View>
         <Button title='asyn sstorage test' onPress={this.test} />
-        {/* <Text style={{fontWeight: 'bold', textAlign: 'center', paddingTop:30, borderColor: 'black', borderWidth: 1}}>DECISION MAKER</Text> */}
+        <View style={{ flex: 1, flexDirection: 'row', top:30 }} >
+          <Button title='save list' onPress={() => this._toggleModal('save')} />
+          <Button title='load list' onPress={() => this._toggleModal('load')} />
+        </View>
+        <View style={{ top:50 }}>
         <FormInput onChangeText={this.handleTextChange} value={this.state.newOption} />
-        <Button title='ADD ITEM' onPress={this.addOption} />
+        <Button title='ADD OPTION' onPress={this.addOption} />
         <ScrollView>
           <Card >
             {this.props.options.map((option, index) => <ListItem key={option} title={option} containerStyle={{ backgroundColor: this.state.selectedItemIndex == index ? '#87CEEB' : 'white' }} rightIcon={{ name: "delete" }} onPressRightIcon={() => this.deleteItem(index)} />)}
             {/* <FormValidationMessage>Error message</FormValidationMessage> */}
           </Card>
         </ScrollView>
-        <ListManagerModal isVisible={this.state.isModalVisible} toggleModal={this._toggleModal} listItems={this.state.options} />
+        <ListManagerModal isVisible={this.state.isModalVisible} toggleModal={this._toggleModal} listItems={this.state.options} mode={this.state.managerMode} saveList = {this.saveList} loadList = {this.loadList}/>
         <View style={{ flex: 1 }} >
           <Button title='show modal' onPress={this._toggleModal} />
         </View>
+        </View>
+        {/* <Text style={{fontWeight: 'bold', textAlign: 'center', paddingTop:30, borderColor: 'black', borderWidth: 1}}>DECISION MAKER</Text> */}
+       
       </View>
     );
   }
