@@ -1,96 +1,116 @@
 import React from 'react';
+import { AsyncStorage } from "react-native"
+
 import { Alert, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Button, Card, FormInput } from 'react-native-elements';
+import { Button, Card, FormInput, FormValidationMessage } from 'react-native-elements';
 import Modal from "react-native-modal";
 import { getData, saveData } from '../api/listManager';
 
-
 export default class ListManagerModal extends React.Component {
 
-  constructor(props) {
-    super(props)
-    this.state = { myKey: '', listsNames: ['list 1', 'list 2', 'list 3', 'list 4'], currentListName: '' }
+  state = { myKey: '', listsNames: [], currentListName: '', errorMessage: '' }
+  store = '@RandomeChooser:';
+
+  async componentDidMount() {
+
+    const value = await getData('LISTS')
+
+    if (value != null) {
+      this.setState({ listsNames: JSON.parse(value) });
+    }
   }
 
-  componentDidMount() {
-    // getData('LISTS')
-    // try {
-    //   const value = await AsyncStorage.getItem(this.state.store + 'listsNames');
-    //   this.setState({ listsNames: value });
-    // } catch (error) {
-    //   console.log("Error retrieving data" + error);
-    // }
-  }
-
-  
   handleTextChange = (name) => {
     this.setState({ currentListName: name });
   }
 
-  saveList = () => {
-    // saving the list name in the the list array
-    this.setState({ listsNames: [...this.state.listsNames, this.state.currentListName] }, () => {
-      saveData('LISTS', JSON.stringify(this.state.listsNames))
-      // this.saveData(this.state.currentListName, JSON.stringify(this.props.listsNames))
-    });
+  saveList = async () => {
+    if(!this.state.currentListName.trim()){
+      this.setState({ errorMessage: 'List name cannot be empty.' })
+    } else{
+      const value = await getData('LISTS')
 
-    this.props.saveList(this.state.currentListName)
-    this.props.toggleModal('')
-    
+      if (value != null && !value.includes(this.state.currentListName)) {
+        this.setState({ listsNames: JSON.parse(value) });
+      }
+  
+      if (!this.state.listsNames.includes(this.state.currentListName)) {
+        this.setState({ listsNames: [...this.state.listsNames, this.state.currentListName] }, () => {
+          saveData('LISTS', JSON.stringify(this.state.listsNames))
+        });
+      }
+  
+      this.props.saveList(this.state.currentListName)
+      this.toggleModal()
+      this.setState({ errorMessage: '' })
+    }
+  }
 
-    // Saving the list contents
-    
+  deleteList = async (listName) => {
+    const lists = JSON.parse(await getData('LISTS'))
+    const index = lists.indexOf(listName)
+
+    if (index >= 0) {
+      lists.splice(index, 1)
+      saveData('LISTS', JSON.stringify(lists))
+      this.setState({ listsNames: lists })
+    }
   }
 
   loadList = () => {
-    // console.log('inside load list')
-    // debugger
-    debugger
-    this.props.toggleModal('')
+    this.toggleModal()
     this.props.loadList(this.state.currentListName)
-    // debugger
-
   }
 
   handlePress(listName) {
-    debugger
-    this.setState({currentListName: listName})
+    this.setState({ currentListName: listName })
+  }
+
+  toggleModal = () => {
+    this.props.toggleModal('')
+    this.setState({errorMessage: ''})
   }
 
   render() {
     const buttonTitle = `${this.props.mode} List`;
-    const buttonAction = this.props.mode == 'save'?this.saveList:this.loadList;
+    const buttonAction = this.props.mode == 'save' ? this.saveList : this.loadList;
 
     return (
       <View>
         <ScrollView>
           <Card >
-            <View style={styles.container}>
-              <Modal isVisible={this.props.isVisible} onRequestClose={() => { }}>
-                <View style={styles.modalContent}>
-                  <Text>{this.props.mode} list</Text>
-                  <FormInput onChangeText={this.handleTextChange} value={this.state.currentListName} />
-                  <FlatList style={styles.list}
-                    data={this.state.listsNames}
-                    renderItem={({ item }) => (
-                      <TouchableOpacity onPress={() => this.handlePress(item)}>
-                        <View>
-                          <Text>{item}</Text>
+            <View>
+              <View style={styles.container}>
+                <Modal isVisible={this.props.isVisible} onRequestClose={() => { }}>
+                  <View style={styles.modalContent}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                      <Text>{this.props.mode} list</Text>
+                      <TouchableOpacity onPress={this.toggleModal} style={{ marginLeft: 'auto' }}>
+                        <View> 
+                          <Text>{'X'}</Text>
                         </View>
                       </TouchableOpacity>
-                    )}
-                  />                 
-                  <Button title = {buttonTitle} onPress={buttonAction} />
-
-                  
-                  <TouchableOpacity onPress={() => this.props.toggleModal('')}>
-                    <View style={styles.button}>
-                      <Text>{this.state.myKey}</Text>
                     </View>
-                  </TouchableOpacity>
-               
-                </View>
-              </Modal>
+                    <FormInput onChangeText={this.handleTextChange} value={this.state.currentListName} />
+                    {this.state.errorMessage ? <FormValidationMessage>{this.state.errorMessage}</FormValidationMessage > : null}
+                    <View>
+                      <FlatList 
+                        style={styles.list}
+                        data={this.state.listsNames}
+                        renderItem={({ item }) => (
+                          <TouchableOpacity onPress={() => this.handlePress(item)}>
+                            <View style={{ display: 'flex', flexDirection: 'row', padding: 10, marginLeft: 30, marginRight: 30, justifyContent: 'space-between' }}>
+                              <Text>{item}</Text>
+                              <TouchableOpacity onPress={() => this.deleteList(item)} style={{ backgroundColor: 'gray', margin: 1 }} ><Text> X </Text></TouchableOpacity>
+                            </View>
+                          </TouchableOpacity>
+                        )}
+                      />
+                    </View>
+                    <Button title={buttonTitle} onPress={buttonAction} />
+                  </View>
+                </Modal>
+              </View>
             </View>
           </Card>
         </ScrollView>
@@ -104,6 +124,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+
   },
   button: {
     backgroundColor: 'darkgray',
@@ -116,9 +137,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: 'white',
-    padding: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 10,
     borderRadius: 4,
     borderColor: 'rgba(0, 0, 0, 0.1)',
   },
@@ -126,5 +145,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     margin: 0,
   },
+  list: {
+    margin: 3
+  }
 });
-

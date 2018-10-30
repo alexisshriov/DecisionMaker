@@ -1,4 +1,4 @@
-import { ADD_OPTION, LOAD_OPTIONS_SUCCESS, DELETE_OPTION } from '../constants/actionTypes'
+import { ADD_OPTION, LOAD_OPTIONS_SUCCESS, DELETE_OPTION, EMPTY_LIST } from '../constants/actionTypes'
 
 const optionsReducer = (state = [], action) => {
 
@@ -11,6 +11,9 @@ const optionsReducer = (state = [], action) => {
             return newState
         case LOAD_OPTIONS_SUCCESS:
             return action.list
+        case EMPTY_LIST:
+            console.log('here')
+            return []
         default:
             return state;
     }

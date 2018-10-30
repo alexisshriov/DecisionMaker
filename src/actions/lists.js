@@ -79,21 +79,13 @@ export function deleteOption(index) {
 }
 
 export function loadList(key) {
-
   return async (dispatch) => {
     try {
-
       const list = await AsyncStorage.getItem(store + key);
-      console.log('load')
-      console.log('lists', list)
-
       dispatch(loadListSuccess(JSON.parse(list)))
     } catch (error) {
-
       console.log(error)
-      // dispatch({ type: 'error', name: 'error', value: e.message })
     }
   }
-
-  debugger
 }
+

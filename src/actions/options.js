@@ -1,4 +1,4 @@
-import { ADD_OPTION, LOAD_OPTIONS_SUCCESS, DELETE_OPTION} from '../constants/actionTypes'
+import { ADD_OPTION, LOAD_OPTIONS_SUCCESS, DELETE_OPTION, EMPTY_LIST} from '../constants/actionTypes'
 import { AsyncStorage, Alert } from "react-native"
 import { saveData, getData } from '../api/listManager'
 
@@ -39,43 +39,16 @@ export const saveList = (key, list) => {
 
 export function addOption(optionDesc) {
   return { type: ADD_OPTION, optionDesc }
-  // return async (dispatch) => {
-  //   try {
 
-  //     let list = JSON.parse(await AsyncStorage.getItem(store + 'TEST_KEY'));
-  //     list.push(optionDesc)
-
-  //     await AsyncStorage.setItem(store + 'TEST_KEY', JSON.stringify(list))
-  //     //dispatch(loadList())
-
-  //     dispatch(addOptionSuccess(optionDesc))
-
-  //   } catch (error) {
-  //     console.log(error)
-  //     // dispatch({ type: 'error', name: 'error', value: e.message })
-  //   }
-  // }
 }
 
 export function deleteOption(index) {
   return { type: DELETE_OPTION, index }
 
-  // return async (dispatch) => {
-  //   try {
+}
 
-  //     let list = JSON.parse(await AsyncStorage.getItem(store + 'TEST_KEY'));
-  //     list.splice(index, 1);
-
-  //     await AsyncStorage.setItem(store + 'TEST_KEY', JSON.stringify(list))
-  //     //dispatch(loadList())
-
-  //     dispatch(deleteOptionSuccess(index))
-
-  //   } catch (error) {
-  //     console.log(error)
-  //     // dispatch({ type: 'error', name: 'error', value: e.message })
-  //   }
-  // }
+export function emptyList() {
+  return { type: EMPTY_LIST }
 }
 
 export function loadList(key) {
@@ -84,16 +57,12 @@ export function loadList(key) {
     try {
 
       const list = await AsyncStorage.getItem(store + key);
-      console.log('load')
-      console.log('lists', list)
 
       dispatch(loadListSuccess(JSON.parse(list)))
     } catch (error) {
-
       console.log(error)
       // dispatch({ type: 'error', name: 'error', value: e.message })
     }
   }
 
-  debugger
 }

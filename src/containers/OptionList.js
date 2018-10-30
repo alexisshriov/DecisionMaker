@@ -1,65 +1,39 @@
 import React from 'react';
-import { AsyncStorage, Alert } from "react-native"
+import { AsyncStorage, Alert, Text } from "react-native"
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { StyleSheet } from 'react-native';
 
 import ListManagerModal from '../components/ListManagerModal'
-import { View, ScrollView } from 'react-native';
-import { Button, FormInput, Card, ListItem } from 'react-native-elements'
+import { View, ScrollView, FlatList } from 'react-native';
+import { Button, FormInput, Card, ListItem, FormValidationMessage } from 'react-native-elements'
 import * as actions from '../actions/options';
 import { saveData, getData } from '../api/listManager'
-//----------------------------------
+//--------------------------------------------
 import { loadList } from '../actions/options'
 
 export class OptionList extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = { newOption: '', selectedItemIndex: -1, isModalVisible: false, managerMode: '' }
-    //this.state = { newOption: '345', options: ["option 1", "option 2", "option 3", "option 4", "option 5", "option 6", "option 7", "option 8", "option 9", "option 10", "option 11", "option 12", "option 13", "option 14", "option 15"] }
+    this.state = { newOption: '', selectedItemIndex: -1, isModalVisible: false, managerMode: '', errorMessage: '' }
   }
-  // async componentWillMount(){
-  //   //AsyncStorage.setItem('testListName', JSON.stringify(['asd', 'pqr']));
-
-
-  //   // AsyncStorage.getItem("testListName")
-  //   // .then((user) => {
-  //   //     const temp = user
-  //   // })
-  //   // .catch(() => {
-  //   //   debugger
-  //   //   this.props.isLoadingCredentials(false); // Error
-  //   // });
-  // }
-
-  async componentDidMount() {
-    
-    // debugger
-    // const options = ["option 1", "option 2", "option 3", "option 4", "option 5", "option 6", "option 7", "option 8", "option 9", "option 10", "option 11", "option 12", "option 13", "option 14", "option 15"]
-    // saveData('TEST_KEY', JSON.stringify(options))
-    //loadList()
-    //this.props.actions.loadList('testListName')
-  }
-
 
   handleTextChange = (text) => {
     this.setState({ newOption: text });
   }
 
   addOption = (event) => {
-    //this.randomize()
-
-    this.props.actions.addOption(this.state.newOption)
-    this.setState({ newOption: '' })
-    //  const updatedOptions = [...this.state.options, this.state.newOption];
-    //  this.setState({options: updatedOptions});
-    //  this.setState({newOption: ''});
-
+    if (!this.state.newOption.trim()) {
+      this.setState({ errorMessage: 'This field cannot be empty.' })
+    }
+    else {
+      this.props.actions.addOption(this.state.newOption)
+      this.setState({ newOption: '', errorMessage: '' })
+    }
   }
 
   saveList = (listName) => {
-    debugger
     this.props.actions.saveList(listName, this.props.options)
   }
 
@@ -68,52 +42,70 @@ export class OptionList extends React.Component {
   }
 
   randomize = () => {
-    // setInterval(() => {
-    //   this.setState({selectedItemIndex: this.getRandomInt(0, 4)})
-    //  }, 100);
-    this.setState({ selectedItemIndex: this.getRandomInt(0, 4) })
+    const randomIndex = this.getRandomInt(0, this.props.options.length - 1)
+    this.setState({ selectedItemIndex: randomIndex })
+
+    this.flatListRef.scrollToIndex({animated: true, index: randomIndex, viewPosition: 0.5});
   }
 
   deleteItem = (index) => {
     this.props.actions.deleteOption(index)
+    this.setState({ selectedItemIndex: -1 })
   }
 
   _toggleModal = (managerMode) => {
-    debugger
-    this.setState({managerMode: managerMode, isModalVisible: !this.state.isModalVisible });
+    this.setState({ managerMode: managerMode, isModalVisible: !this.state.isModalVisible });
   }
 
   loadList = (listName) => {
     this.props.actions.loadList(listName)
+    this.setState({ errorMessage: '' })
   }
 
-
-
+  emptyList = () => {
+    this.props.actions.emptyList()
+  }
 
   render() {
+
+    const selectedIndex = this.state.selectedItemIndex
+    
+    console.log('selected index: ', this.state.selectedItemIndex)
     return (
-      <View>
-        <Button title='asyn sstorage test' onPress={this.test} />
-        <View style={{ flex: 1, flexDirection: 'row', top:30 }} >
-          <Button title='save list' onPress={() => this._toggleModal('save')} />
-          <Button title='load list' onPress={() => this._toggleModal('load')} />
+      <View style={{ marginTop: 50, flex: 1 }} >
+        <View style={{ flex: 1, flexDirection: 'row' }} >
+          <Button buttonStyle={{borderRadius: 3, height: 30}} title='Save list' onPress={() => this._toggleModal('save')} />
+          <Button buttonStyle={{borderRadius: 3, height: 30}} title='Load list' onPress={() => this._toggleModal('load')} />
+          <Button buttonStyle={{borderRadius: 3, height: 30}} title='Empty list' onPress={this.emptyList} />
         </View>
-        <View style={{ top:50 }}>
-        <FormInput onChangeText={this.handleTextChange} value={this.state.newOption} />
-        <Button title='ADD OPTION' onPress={this.addOption} />
-        <ScrollView>
+
+       <View style={{flex: 4}} >
+          <FormInput placeholder={'Add your new option here...'} onChangeText={this.handleTextChange} value={this.state.newOption} />
+          {this.state.errorMessage ? <FormValidationMessage>{this.state.errorMessage}</FormValidationMessage > : null}
+          <Button buttonStyle={{ margin: 3,  borderRadius: 3 }} title='ADD OPTION' onPress={this.addOption} />
+          <Button buttonStyle={{ margin: 3, borderRadius: 3, backgroundColor: '#87CEEB' }} title='CHOSE RANDOMLY' onPress={this.randomize} />
+        </View>
+
+        <View style={{ flex: 9 }}>
           <Card >
-            {this.props.options.map((option, index) => <ListItem key={option} title={option} containerStyle={{ backgroundColor: this.state.selectedItemIndex == index ? '#87CEEB' : 'white' }} rightIcon={{ name: "delete" }} onPressRightIcon={() => this.deleteItem(index)} />)}
-            {/* <FormValidationMessage>Error message</FormValidationMessage> */}
+            <FlatList
+              data={this.props.options}
+              ref={(ref) => { this.flatListRef = ref; }}
+              extraData={this.state.selectedItemIndex}
+              renderItem={({ item, index }) => (
+                <ListItem 
+                  key={item} 
+                  title={item} 
+                  containerStyle={{ backgroundColor: selectedIndex === index ? '#17ECEC' : 'white' }} 
+                  rightIcon={{ name: "delete" }} 
+                  onPressRightIcon={() => this.deleteItem(index)} />
+              )}
+            />
           </Card>
-        </ScrollView>
-        <ListManagerModal isVisible={this.state.isModalVisible} toggleModal={this._toggleModal} listItems={this.state.options} mode={this.state.managerMode} saveList = {this.saveList} loadList = {this.loadList}/>
-        <View style={{ flex: 1 }} >
-          <Button title='show modal' onPress={this._toggleModal} />
         </View>
+        <View style = {{flex: 1}}>
+           <ListManagerModal isVisible={this.state.isModalVisible} toggleModal={this._toggleModal} listItems={this.state.options} mode={this.state.managerMode} saveList={this.saveList} loadList={this.loadList} />
         </View>
-        {/* <Text style={{fontWeight: 'bold', textAlign: 'center', paddingTop:30, borderColor: 'black', borderWidth: 1}}>DECISION MAKER</Text> */}
-       
       </View>
     );
   }
