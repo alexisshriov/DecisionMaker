@@ -11,7 +11,6 @@ export async function saveData (key, value) {
   };
 
 export async function getData (key) {
-
     try {
         const value = await AsyncStorage.getItem(store + key);
         return value

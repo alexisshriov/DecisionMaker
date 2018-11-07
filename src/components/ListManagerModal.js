@@ -1,5 +1,4 @@
 import React from 'react';
-import { AsyncStorage } from "react-native"
 
 import { Alert, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button, Card, FormInput, FormValidationMessage } from 'react-native-elements';
@@ -27,7 +26,11 @@ export default class ListManagerModal extends React.Component {
   saveList = async () => {
     if(!this.state.currentListName.trim()){
       this.setState({ errorMessage: 'List name cannot be empty.' })
-    } else{
+    } else if (this.props.optionsCount === 0) {
+      this.setState({ errorMessage: 'The list must have at least one option.' })
+    } 
+    
+    else{
       const value = await getData('LISTS')
 
       if (value != null && !value.includes(this.state.currentListName)) {
@@ -58,6 +61,10 @@ export default class ListManagerModal extends React.Component {
   }
 
   loadList = () => {
+    if(!this.state.currentListName.trim()){
+      this.setState({ errorMessage: 'Select a list to be loaded.' })
+      return
+    }
     this.toggleModal()
     this.props.loadList(this.state.currentListName)
   }
@@ -101,13 +108,13 @@ export default class ListManagerModal extends React.Component {
                           <TouchableOpacity onPress={() => this.handlePress(item)}>
                             <View style={{ display: 'flex', flexDirection: 'row', padding: 10, marginLeft: 30, marginRight: 30, justifyContent: 'space-between' }}>
                               <Text>{item}</Text>
-                              <TouchableOpacity onPress={() => this.deleteList(item)} style={{ backgroundColor: 'gray', margin: 1 }} ><Text> X </Text></TouchableOpacity>
+                              <TouchableOpacity onPress={() => this.deleteList(item)} style={{ borderRadius: 3, backgroundColor: 'gray', margin: 1 }} ><Text> X </Text></TouchableOpacity>
                             </View>
                           </TouchableOpacity>
                         )}
                       />
                     </View>
-                    <Button title={buttonTitle} onPress={buttonAction} />
+                    <Button title={buttonTitle} onPress={buttonAction}  buttonStyle={{ borderRadius: 3 }} />
                   </View>
                 </Modal>
               </View>

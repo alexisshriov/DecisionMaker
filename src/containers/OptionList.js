@@ -1,16 +1,12 @@
 import React from 'react';
-import { AsyncStorage, Alert, Text } from "react-native"
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { StyleSheet } from 'react-native';
 
 import ListManagerModal from '../components/ListManagerModal'
-import { View, ScrollView, FlatList } from 'react-native';
+import { View, FlatList } from 'react-native';
 import { Button, FormInput, Card, ListItem, FormValidationMessage } from 'react-native-elements'
 import * as actions from '../actions/options';
-import { saveData, getData } from '../api/listManager'
-//--------------------------------------------
-import { loadList } from '../actions/options'
 
 export class OptionList extends React.Component {
 
@@ -59,18 +55,18 @@ export class OptionList extends React.Component {
 
   loadList = (listName) => {
     this.props.actions.loadList(listName)
-    this.setState({ errorMessage: '' })
+    this.setState({ errorMessage: '', selectedItemIndex: -1 })
   }
 
   emptyList = () => {
     this.props.actions.emptyList()
   }
-
+  
   render() {
 
     const selectedIndex = this.state.selectedItemIndex
+
     
-    console.log('selected index: ', this.state.selectedItemIndex)
     return (
       <View style={{ marginTop: 50, flex: 1 }} >
         <View style={{ flex: 1, flexDirection: 'row' }} >
@@ -104,7 +100,7 @@ export class OptionList extends React.Component {
           </Card>
         </View>
         <View style = {{flex: 1}}>
-           <ListManagerModal isVisible={this.state.isModalVisible} toggleModal={this._toggleModal} listItems={this.state.options} mode={this.state.managerMode} saveList={this.saveList} loadList={this.loadList} />
+           <ListManagerModal isVisible={this.state.isModalVisible} toggleModal={this._toggleModal} listItems={this.state.options} mode={this.state.managerMode} saveList={this.saveList} loadList={this.loadList} optionsCount = {this.props.options.length} />
         </View>
       </View>
     );
