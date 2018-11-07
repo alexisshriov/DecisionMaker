@@ -1,10 +1,10 @@
 import React from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View, FlatList } from 'react-native';
 
 import ListManagerModal from '../components/ListManagerModal'
-import { View, FlatList } from 'react-native';
+import { } from 'react-native';
 import { Button, FormInput, Card, ListItem, FormValidationMessage } from 'react-native-elements'
 import * as actions from '../actions/options';
 
@@ -29,28 +29,13 @@ export class OptionList extends React.Component {
     }
   }
 
-  saveList = (listName) => {
-    this.props.actions.saveList(listName, this.props.options)
-  }
-
-  getRandomInt = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  randomize = () => {
-    const randomIndex = this.getRandomInt(0, this.props.options.length - 1)
-    this.setState({ selectedItemIndex: randomIndex })
-
-    this.flatListRef.scrollToIndex({animated: true, index: randomIndex, viewPosition: 0.5});
-  }
-
-  deleteItem = (index) => {
+  deleteOption = (index) => {
     this.props.actions.deleteOption(index)
     this.setState({ selectedItemIndex: -1 })
   }
 
-  _toggleModal = (managerMode) => {
-    this.setState({ managerMode: managerMode, isModalVisible: !this.state.isModalVisible });
+  saveList = (listName) => {
+    this.props.actions.saveList(listName, this.props.options)
   }
 
   loadList = (listName) => {
@@ -61,25 +46,38 @@ export class OptionList extends React.Component {
   emptyList = () => {
     this.props.actions.emptyList()
   }
-  
+
+  getRandomInt = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  randomize = () => {
+    const randomIndex = this.getRandomInt(0, this.props.options.length - 1)
+    this.setState({ selectedItemIndex: randomIndex })
+    this.flatListRef.scrollToIndex({ animated: true, index: randomIndex, viewPosition: 0.5 });
+  }
+
+  toggleModal = (managerMode) => {
+    this.setState({ managerMode: managerMode, isModalVisible: !this.state.isModalVisible });
+  }
+
   render() {
 
     const selectedIndex = this.state.selectedItemIndex
 
-    
     return (
-      <View style={{ marginTop: 50, flex: 1 }} >
-        <View style={{ flex: 1, flexDirection: 'row' }} >
-          <Button buttonStyle={{borderRadius: 3, height: 30}} title='Save list' onPress={() => this._toggleModal('save')} />
-          <Button buttonStyle={{borderRadius: 3, height: 30}} title='Load list' onPress={() => this._toggleModal('load')} />
-          <Button buttonStyle={{borderRadius: 3, height: 30}} title='Empty list' onPress={this.emptyList} />
+      <View style={styles.container} >
+        <View style={styles.listOptions} >
+          <Button buttonStyle={styles.smallButton} title='Save list' onPress={() => this.toggleModal('save')} />
+          <Button buttonStyle={styles.smallButton} title='Load list' onPress={() => this.toggleModal('load')} />
+          <Button buttonStyle={styles.smallButton} title='Empty list' onPress={this.emptyList} />
         </View>
 
-       <View style={{flex: 4}} >
+        <View style={{ flex: 4 }} >
           <FormInput placeholder={'Add your new option here...'} onChangeText={this.handleTextChange} value={this.state.newOption} />
           {this.state.errorMessage ? <FormValidationMessage>{this.state.errorMessage}</FormValidationMessage > : null}
-          <Button buttonStyle={{ margin: 3,  borderRadius: 3 }} title='ADD OPTION' onPress={this.addOption} />
-          <Button buttonStyle={{ margin: 3, borderRadius: 3, backgroundColor: '#87CEEB' }} title='CHOSE RANDOMLY' onPress={this.randomize} />
+          <Button buttonStyle={styles.bigButton} title='ADD OPTION' onPress={this.addOption} />
+          <Button buttonStyle={[styles.bigButton, { backgroundColor: '#87CEEB' }]} title='CHOSE RANDOMLY' onPress={this.randomize} />
         </View>
 
         <View style={{ flex: 9 }}>
@@ -89,18 +87,19 @@ export class OptionList extends React.Component {
               ref={(ref) => { this.flatListRef = ref; }}
               extraData={this.state.selectedItemIndex}
               renderItem={({ item, index }) => (
-                <ListItem 
-                  key={item} 
-                  title={item} 
-                  containerStyle={{ backgroundColor: selectedIndex === index ? '#17ECEC' : 'white' }} 
-                  rightIcon={{ name: "delete" }} 
-                  onPressRightIcon={() => this.deleteItem(index)} />
+                <ListItem
+                  key={item}
+                  title={item}
+                  containerStyle={{ backgroundColor: selectedIndex === index ? '#17ECEC' : 'white' }}
+                  rightIcon={{ name: "delete" }}
+                  onPressRightIcon={() => this.deleteOption(index)}
+                />
               )}
             />
           </Card>
         </View>
-        <View style = {{flex: 1}}>
-           <ListManagerModal isVisible={this.state.isModalVisible} toggleModal={this._toggleModal} listItems={this.state.options} mode={this.state.managerMode} saveList={this.saveList} loadList={this.loadList} optionsCount = {this.props.options.length} />
+        <View style={{ flex: 1 }}>
+          <ListManagerModal isVisible={this.state.isModalVisible} toggleModal={this.toggleModal} listItems={this.state.options} mode={this.state.managerMode} saveList={this.saveList} loadList={this.loadList} optionsCount={this.props.options.length} />
         </View>
       </View>
     );
@@ -123,4 +122,24 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps)
   (OptionList);
+
+const styles = StyleSheet.create({
+  listOptions: {
+    flex: 1,
+    flexDirection: 'row'
+  },
+  container: {
+    marginTop: 50,
+    flex: 1
+  },
+  smallButton: {
+    margin: 3,
+    borderRadius: 3,
+    height: 30
+  },
+  bigButton: {
+    borderRadius: 3,
+    margin: 3
+  }
+});
 
