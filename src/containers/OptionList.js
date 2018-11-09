@@ -100,37 +100,40 @@ export class OptionList extends React.Component {
             placeholder={'Add your new option here...'}
           />
           {this.state.errorMessage ? <Text style={styles.errorMessage}>{this.state.errorMessage}</Text > : null}
-          <View style={{marginTop: 4}}>
-          <TouchableOpacity onPress={this.addOption}>
-            <View style={styles.bigButton}>
-              <Text style={{ color: 'white' }}>
-                ADD OPTION
+          <View style={{ marginTop: 4 }}>
+            <TouchableOpacity onPress={this.addOption}>
+              <View style={styles.bigButton}>
+                <Text style={{ color: 'white' }}>
+                  ADD OPTION
               </Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.chooseRandomly}>
-            <View style={[styles.bigButton, { backgroundColor: '#87CEEB' }]}>
-              <Text style={{ color: 'white' }}>
-                CHOOSE RANDOMLY
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.chooseRandomly}>
+              <View style={[styles.bigButton, { backgroundColor: '#87CEEB' }]}>
+                <Text style={{ color: 'white' }}>
+                  CHOOSE RANDOMLY
               </Text>
-            </View>
-          </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
           </View>
 
         </View>
 
-        <View style={{flex: 8}}>
+        <View style={{ flex: 8 }}>
           <View style={styles.listContainer} >
             <FlatList
               data={this.props.options}
               ref={(ref) => { this.flatListRef = ref; }}
               extraData={this.state.selectedItemIndex}
+              keyExtractor={(index) => index.toString()}
               renderItem={({ item, index }) => (
-                <View key={item} style={ [styles.option, {backgroundColor: selectedIndex === index ? '#17ECEC' : 'white'}] }>
+                <View key={item} style={[styles.option, { backgroundColor: selectedIndex === index ? '#17ECEC' : 'white' }]}>
                   <Text>{item}</Text>
-                  <TouchableOpacity onPress={() => this.deleteOption(index)}>
-                    <Icon name="trash" size={30} color="#999999" />
-                  </TouchableOpacity>
+                  <View style={{ flexDirection: 'row' }}>
+                    <TouchableOpacity onPress={() => this.deleteOption(index)}>
+                      <Icon name="trash" size={30} color="#999999" />
+                    </TouchableOpacity>
+                  </View>
                 </View >
               )}
             />
@@ -174,7 +177,7 @@ const styles = StyleSheet.create({
   smallButton: {
     backgroundColor: '#999999',
     margin: 3,
-    borderRadius: 3,
+    borderRadius: 4,
     paddingTop: 6,
     paddingLeft: 12,
     paddingBottom: 6,
@@ -186,7 +189,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#999999',
     margin: 3,
-    borderRadius: 3,
+    borderRadius: 4,
     padding: 12,
     marginLeft: 17,
     marginRight: 17
@@ -208,7 +211,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     paddingVertical: 10,
     paddingHorizontal: 7,
-    borderRadius: 3
+    borderRadius: 4
   },
   errorMessage: {
     color: 'red',

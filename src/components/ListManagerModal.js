@@ -103,6 +103,7 @@ export default class ListManagerModal extends React.Component {
                     <FlatList
                       style={styles.list}
                       data={this.state.listsNames}
+                      keyExtractor={(index) => index.toString()}
                       renderItem={({ item }) => (
                         <TouchableOpacity onPress={() => this.handlePress(item)}>
                           <View style={styles.item}>
@@ -178,7 +179,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#999999',
     margin: 3,
-    borderRadius: 3,
+    borderRadius: 4,
     padding: 12,
     marginLeft: 17,
     marginRight: 17
