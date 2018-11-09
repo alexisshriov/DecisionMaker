@@ -1,7 +1,7 @@
 import React from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Alert, Text, TextInput, TouchableOpacity, StyleSheet, View, FlatList } from 'react-native';
+import { Text, TextInput, TouchableOpacity, StyleSheet, View, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import ListManagerModal from '../components/ListManagerModal'
