@@ -2,7 +2,7 @@
   "expo": {
   "name":"decisionMaker",
   "icon": "./src/images/decisionMakerIcon.png",
-  "description":"Let destiny choose for you by creating a list of options and letting the app to randomly pick one of them",
+  "description":"Let destiny choose for you by creating a list of options and letting the app randomly pick one of them.",
   "sdkVersion": "27.0.0",
   "android":{
        "package":"com.asierra.decisionMaker",
