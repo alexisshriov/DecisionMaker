@@ -92,7 +92,7 @@ export class OptionList extends React.Component {
             </View>
           </TouchableOpacity>
         </View>
-        <View style={{ flex: 4 }} >
+        <View>
           <TextInput
             style={styles.input}
             value={this.state.newOption}
@@ -100,6 +100,7 @@ export class OptionList extends React.Component {
             placeholder={'Add your new option here...'}
           />
           {this.state.errorMessage ? <Text style={styles.errorMessage}>{this.state.errorMessage}</Text > : null}
+          <View style={{marginTop: 4}}>
           <TouchableOpacity onPress={this.addOption}>
             <View style={styles.bigButton}>
               <Text style={{ color: 'white' }}>
@@ -114,9 +115,11 @@ export class OptionList extends React.Component {
               </Text>
             </View>
           </TouchableOpacity>
+          </View>
+
         </View>
 
-        <View style={{ flex: 9 }}>
+        <View style={{flex: 8}}>
           <View style={styles.listContainer} >
             <FlatList
               data={this.props.options}
@@ -160,13 +163,12 @@ export default connect(
 
 const styles = StyleSheet.create({
   listOptions: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginHorizontal: 15
   },
   container: {
-    marginTop: 50,
+    marginTop: 35,
     flex: 1
   },
   smallButton: {
