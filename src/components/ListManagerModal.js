@@ -1,6 +1,5 @@
 import React from 'react';
-import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Button, Card, FormInput, FormValidationMessage } from 'react-native-elements';
+import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, TextInput, View } from 'react-native';
 import Modal from "react-native-modal";
 
 import { getData, saveData } from '../api/listManager';
@@ -82,41 +81,49 @@ export default class ListManagerModal extends React.Component {
     return (
       <View>
         <ScrollView>
-          <Card >
-            <View>
-              <View style={styles.container}>
-                <Modal isVisible={this.props.isVisible} onRequestClose={() => { }}>
-                  <View style={styles.modalContent}>
-                    <View style={styles.modalHeader}>
-                      <Text>{this.props.mode} list</Text>
-                      <TouchableOpacity onPress={this.toggleModal} style={{ marginLeft: 'auto' }}>
-                        <View>
-                          <Text>{'X'}</Text>
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                    <FormInput onChangeText={this.handleTextChange} value={this.state.currentListName} />
-                    {this.state.errorMessage ? <FormValidationMessage>{this.state.errorMessage}</FormValidationMessage > : null}
-                    <View>
-                      <FlatList
-                        style={styles.list}
-                        data={this.state.listsNames}
-                        renderItem={({ item }) => (
-                          <TouchableOpacity onPress={() => this.handlePress(item)}>
-                            <View style={styles.item}>
-                              <Text>{item}</Text>
-                              <TouchableOpacity onPress={() => this.deleteList(item)} style={styles.eliminateList}><Text> X </Text></TouchableOpacity>
-                            </View>
-                          </TouchableOpacity>
-                        )}
-                      />
-                    </View>
-                    <Button title={buttonTitle} onPress={buttonAction} buttonStyle={{ borderRadius: 3 }} />
+          <View>
+            <View style={styles.container}>
+              <Modal isVisible={this.props.isVisible} onRequestClose={() => { }}>
+                <View style={styles.modalContent}>
+                  <View style={styles.modalHeader}>
+                    <Text>{this.props.mode} list</Text>
+                    <TouchableOpacity onPress={this.toggleModal} style={{ marginLeft: 'auto' }}>
+                      <View>
+                        <Text>{'X'}</Text>
+                      </View>
+                    </TouchableOpacity>
                   </View>
-                </Modal>
-              </View>
+                  <TextInput
+                    style={styles.input}
+                    value={this.state.currentListName}
+                    onChangeText={this.handleTextChange}
+                  />
+                  {this.state.errorMessage ? <Text style={styles.errorMessage}>{this.state.errorMessage}</Text > : null}
+                  <View>
+                    <FlatList
+                      style={styles.list}
+                      data={this.state.listsNames}
+                      renderItem={({ item }) => (
+                        <TouchableOpacity onPress={() => this.handlePress(item)}>
+                          <View style={styles.item}>
+                            <Text>{item}</Text>
+                            <TouchableOpacity onPress={() => this.deleteList(item)} style={styles.eliminateList}><Text> X </Text></TouchableOpacity>
+                          </View>
+                        </TouchableOpacity>
+                      )}
+                    />
+                  </View>
+                  <TouchableOpacity onPress={buttonAction}>
+                    <View style={[styles.bigButton]}>
+                      <Text style={{ color: 'white' }}>
+                        {buttonTitle}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </Modal>
             </View>
-          </Card>
+          </View>
         </ScrollView>
       </View >
     )
@@ -167,4 +174,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'gray',
     margin: 1
   },
+  bigButton: {
+    alignItems: 'center',
+    backgroundColor: '#999999',
+    margin: 3,
+    borderRadius: 3,
+    padding: 12,
+    marginLeft: 17,
+    marginRight: 17
+  },
+  input: {
+    marginHorizontal: 15,
+    padding: 7
+  },
+  errorMessage: {
+    color: 'red',
+    marginLeft: 17,
+    marginBottom: 10
+  }
 });
