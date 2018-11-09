@@ -65,7 +65,6 @@ export class OptionList extends React.Component {
   }
 
   render() {
-
     const selectedIndex = this.state.selectedItemIndex
 
     return (
