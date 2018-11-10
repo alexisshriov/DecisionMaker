@@ -1,7 +1,6 @@
 import { ADD_OPTION, LOAD_OPTIONS_SUCCESS, DELETE_OPTION, EMPTY_LIST } from '../constants/actionTypes'
 
 const optionsReducer = (state = [], action) => {
-
     switch (action.type) {
         case ADD_OPTION:
             return [...state, action.optionDesc]

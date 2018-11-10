@@ -70,14 +70,14 @@ export class OptionList extends React.Component {
     return (
       <View style={styles.container} >
         <View style={styles.listOptions} >
-          <TouchableOpacity onPress={() => this.toggleModal('save')}>
+          <TouchableOpacity onPress={() => this.toggleModal('Save')}>
             <View style={styles.smallButton}>
               <Text style={{ color: 'white' }}>
                 Save list
               </Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.toggleModal('load')}>
+          <TouchableOpacity onPress={() => this.toggleModal('Load')}>
             <View style={styles.smallButton}>
               <Text style={{ color: 'white' }}>
                 Load list

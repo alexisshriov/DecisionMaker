@@ -75,8 +75,9 @@ export default class ListManagerModal extends React.Component {
   }
 
   render() {
-    const buttonTitle = `${this.props.mode} List`;
-    const buttonAction = this.props.mode == 'save' ? this.saveList : this.loadList;
+    const { mode } = this.props
+    const buttonTitle = `${mode} List`;
+    const buttonAction = mode == 'Save' ? this.saveList : this.loadList;
 
     return (
       <View>
@@ -86,14 +87,14 @@ export default class ListManagerModal extends React.Component {
               <Modal isVisible={this.props.isVisible} onRequestClose={() => { }}>
                 <View style={styles.modalContent}>
                   <View style={styles.modalHeader}>
-                    <Text>{this.props.mode} list</Text>
+                    <Text>{this.props.mode} List</Text>
                     <TouchableOpacity onPress={this.toggleModal} style={{ marginLeft: 'auto' }}>
                       <View>
                         <Text>{'X'}</Text>
                       </View>
                     </TouchableOpacity>
                   </View>
-                  <TextInput
+                  <TextInput editable={ mode === 'Save'}
                     style={styles.input}
                     value={this.state.currentListName}
                     onChangeText={this.handleTextChange}

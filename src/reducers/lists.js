@@ -1,7 +1,6 @@
 import { ADD_LIST_SUCCESS, LOAD_LISTS_SUCCESS, DELETE_LIST_SUCCESS } from '../constants/actionTypes'
 
 const listsReducer = (state = [], action) => {
-
     switch (action.type) {
         case ADD_LIST_SUCCESS:
             return [...state, action.optionDesc]
