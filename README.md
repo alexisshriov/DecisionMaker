@@ -1,4 +1,4 @@
-This app allows you to make choices randomtly from a set of options defined by the user. I created this app for learning purposes.
+This app allows you to make choices randomly from a set of options defined by the user. I created this app for learning purposes.
 
 ## Table of Contents
 
